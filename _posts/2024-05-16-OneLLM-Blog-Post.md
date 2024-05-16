@@ -1,9 +1,11 @@
 ---
 title: 'OneLLM: One Framework to Align All Modalities with Language'
 date: 2024-05-16
-permalink: /posts/2012/08/blog-post-1/
+permalink: /posts/onellm/
 tags:
   - OneLLM
+  - language model
+  - draft
 ---
 
 Deep Learning has revolutionized a number of fields in the last years by providing powerful capabilities for tasks that involve complex data structures and patterns, such as image recognition, language processing, and more. 
