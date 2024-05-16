@@ -1,4 +1,4 @@
-l# Welcome to Jekyll!
+# Welcome to Jekyll!
 #
 # This config file is meant for settings that affect your entire site, values
 # which you are expected to set up once and rarely need to edit after that.
@@ -12,7 +12,7 @@ title                    : "Timofey Egorov, Jan Deichsel / OneLLM"
 title_separator          : "-"
 name                     : &name "Timofey Egorov, Jan Deichsel"
 description              : &description "personal description"
-url                      : https://academicpages.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+url                      : https://jdeichsel.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "jdeichsel/academicpages.github.io"
 
