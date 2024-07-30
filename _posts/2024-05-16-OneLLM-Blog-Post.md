@@ -247,7 +247,8 @@ After training on the image dataset, new modalities are continually being added 
 Essentially, all previous modalities have successfully been trained upon.\
 One important issue when training models is catastrophic forgetting where the model simply forgets previously trained knowledge when working with increasingly large datasets.
 To counteract on that, we will sample an equal amount of already trained items with the new dataset, showing the importance of sampling datasets by order of size.\
-Alright, that’s it! We’ve trained our Tokenizers and UPM. Now, we’re looking at what is basically a captioning model. What is missing now is reasoning, conversation, etc. \
+Alright, that’s it! We’ve trained our Tokenizers and UPM.\
+Now, we’re looking at what is basically a captioning model. What is missing now is reasoning, conversation, etc. \
 To gain these abilities, we’ll be training the LLM next in the Instruction Tuning Stage.
 
 
@@ -256,7 +257,7 @@ Instruction Tuning
 The process of Instruction Tuning is rather straightforward. We essentially flip around the Modality Alignment process and now train the Large Language Model while keeping the Tokenizers and UPM frozen, i.e. not learning.
 
 ![](/images/instruction_tuning.png)\
-*Figure 17: Showcasing Instruction Tuning training phase (red) by freezing certain parts of the architecture (blue)*
+*Figure 17: Showcasing Instruction Tuning training phase (red) by freezing certain parts of the architecture (blue) [1]*
 
 To do so, there is a 2M items dataset specifically curated for OneLLM, containing items on all eight current modalities.\
 And with the LLM training out of the way, we’re done! The model is now fully functional and can process all modalities, as well as answer user’s prompts in reasoning, question-answering or conversations.
@@ -284,31 +285,31 @@ The model gives reasoning, e.g. what should you do if a bear approaches you (e).
 
 <img src="/images/qualitative_7.png" width="250" height="267" />
 <img src="/images/qualitative_8.png" width="250" height="267" />\
-*Examples g) and h)*
-*Figure 18*
+*Examples g) and h)*\
+*Figure 18 [1]*
 
 Quantitative Analysis
 ======
-Now we have a fully trained model ready to go! But how good is it exactly? 
+Now we have a fully trained model and it's ready to go! But how good is it exactly? 
 To answer this question, a few benchmarks have been provided to give a better understanding of how OneLLM is performing against similar MLLM’s. More interestingly are the specified LLM’s that are also provided within the benchmarks. We’ll get to why that is interesting in just a bit.
 To start things off, we’ll have a look at the Image-Text Benchmarks first. Contrary to the Visual Tokenizer, this does not encompass all visual tasks but only images.
 
 ![](/images/image_text_benchmark.png)\
-*Figure 19: Image-Text-Benchmark comparing MLLMs as well as LLMs. Scores in bold and underline represent the best and second best results, respectively within the MLLM category. Green scores represent the three best results per dataset*
+*Figure 19: Image-Text-Benchmark comparing MLLMs as well as LLMs. Scores in bold and underline represent the best and second best results, respectively within the MLLM category. Green scores represent the three best results per dataset [1]*
 
 The results in bold and underline writing represent the best and second-best results in the MLLM category, respectively. \
 Each of these models was – disregarding a few missing entries – trained on all of these datasets, which test each model’s capability in Visual Question-Answering (VQA) and Image Captioning.
-Looking closely at the results, we can observe OneLLM being the strongest in its field, outperforming all related models on these datasets. Especially compared to AnyMAL-70B which is working on approximately 10x as many parameters as OneLLM-7B, showing the extreme parameter and performance efficiency of OneLLM.\
+Looking closely at the results, we can observe OneLLM being the strongest in its field, outperforming all related models on these datasets. Especially compared to [AnyMAL-70B](https://arxiv.org/pdf/2309.16058) [15] by Moon et al. which is working on approximately 10x as many parameters as OneLLM-7B, showing the extreme parameter and performance efficiency of OneLLM.\
 However, if we look at the scores marked in green, the benchmarks show a little different perspective. Here, we marked the overall three best models from both categories. 
 While OneLLM does still make it into the best three scores for half the datasets, it is nowhere near as dominant as when looking into the MLLM category only. This also goes for the other MLLM models, who are almost unable to secure a competitive score rating. 
 
 Two more benchmarks we’d like to quickly brush over are the Video-Text (left) and Video-Audio-Text (right) benchmarks. 
 
 ![](/images/image_text_benchmark.png)\
-*Figure 20: Example: Video-Text Benchmark (left) and Video-Audio-Text Benchmark (right) including comparison of zero-shot capabilities*
+*Figure 20: Example: Video-Text Benchmark (left) and Video-Audio-Text Benchmark (right) including comparison of zero-shot capabilities [1]*
 
 While the previously established pattern largely repeats here with LLM’s being more accurate, OneLLM starts off on a disadvantage:\
-It did not receive any training datasets concerning Video Question-Answering or Video-Audio Question-Answering. However, their related MLLM AnyMal-13B and ChatBridge-13B did! 
+It did not receive any training datasets concerning Video Question-Answering or Video-Audio Question-Answering. However, their related MLLMs [AnyMal-13B](https://arxiv.org/pdf/2309.16058) [15] and [ChatBridge-13B](https://doi.org/10.48550/arXiv.2305.16103) [5] did! 
 This again goes to show just how strong the modalities are aligned with one another within OneLLM and can learn from each other, given the reduced number of parameters in comparison.
 
 
@@ -316,7 +317,7 @@ This again goes to show just how strong the modalities are aligned with one anot
 One last part we’d like to touch on is the Ablation, showcasing different implementations and their impact on performance.
 
 ![](/images/image_text_benchmark.png)\
-*Figure 21: Impact of different implementation methods on performance*
+*Figure 21: Impact of different implementation methods on performance [1]*
 
 Most notably here is the Separate vs. Joint Training Mode. Quantifying the difference in performance between Separate Training – what regular MLLM’s do, training each modality separately – and OneLLM’s Joint Training turns into a massive performance loss in accuracy. \
 The same goes for the Weight Initialization as to which modality should be trained first to then align all others to it. As expected, starting off with the largest available dataset is much better than choosing at random.
@@ -336,21 +337,21 @@ With that being said, we are very curious to see where Han et al. will be taking
 
 
 # References
-[1] Han et al., 2024, [OneLLM: One Framework to Align All Modalities with Language](https://doi.org/10.48550/arXiv.2312.03700)
-[2] Puigcerver et al., 2024, [From Sparse to Soft Mixture of Experts](https://doi.org/10.48550/arXiv.1603.07285)
-[3] Dumoulin & Visin., 2018, [A guide to convolution arithmetic for deep learning](https://doi.org/10.48550/arXiv.1603.07285)
-[4] Irhum Shafkat, 2018, [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
-[5] Zhao et al., 2020, [ChatBridge: Bridging Modalities with Large Language Model as a Language Catalyst](https://doi.org/10.48550/arXiv.2305.16103)
-[6] Vaswani et al., 2017, [Attention is all you need](https://doi.org/10.48550/arXiv.1706.03762)
-[7] Jesse Vig, 2019, [Deconstructing BERT, Part 2: Visualizing the Inner Works of Attention](https://towardsdatascience.com/deconstructing-bert-part-2-visualizing-the-inner-workings-of-attention-60a16d86b5c1)
-[8] Dosovitskiy et al., 2021, [An Image is worth 16x16 words: Transformers for Image Recognition at Scale](https://doi.org/10.48550/arXiv.2010.11929)
-[9] Li et al., 2023, [BLIP-2: Bootstrapping Language-Image Pre-Training with Frozen Image Encoders and Large Language Models](https://doi.org/10.48550/arXiv.2301.12597)
-[10] Brandon Rohrer, 2019, [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale)
-[11] Lillian Weng, 2018, [Attention? Attention!](https://lilianweng.github.io/posts/2018-06-24-attention/)
-[12] [BertViz Interactive Tutorials](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing)
-[13] Radford et al., 2021, [Learning transferable visual models from natural language super16 vision](https://arxiv.org/pdf/2103.00020)
-[14] Bala Priya C., 2023, [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/)
-
+[1] Han et al., 2024, [OneLLM: One Framework to Align All Modalities with Language](https://doi.org/10.48550/arXiv.2312.03700)\
+[2] Puigcerver et al., 2024, [From Sparse to Soft Mixture of Experts](https://doi.org/10.48550/arXiv.1603.07285)\
+[3] Dumoulin & Visin., 2018, [A guide to convolution arithmetic for deep learning](https://doi.org/10.48550/arXiv.1603.07285)\
+[4] Irhum Shafkat, 2018, [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)\
+[5] Zhao et al., 2020, [ChatBridge: Bridging Modalities with Large Language Model as a Language Catalyst](https://doi.org/10.48550/arXiv.2305.16103)\
+[6] Vaswani et al., 2017, [Attention is all you need](https://doi.org/10.48550/arXiv.1706.03762)\
+[7] Jesse Vig, 2019, [Deconstructing BERT, Part 2: Visualizing the Inner Works of Attention](https://towardsdatascience.com/deconstructing-bert-part-2-visualizing-the-inner-workings-of-attention-60a16d86b5c1)\
+[8] Dosovitskiy et al., 2021, [An Image is worth 16x16 words: Transformers for Image Recognition at Scale](https://doi.org/10.48550/arXiv.2010.11929)\
+[9] Li et al., 2023, [BLIP-2: Bootstrapping Language-Image Pre-Training with Frozen Image Encoders and Large Language Models](https://doi.org/10.48550/arXiv.2301.12597)\
+[10] Brandon Rohrer, 2019, [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale)\
+[11] Lillian Weng, 2018, [Attention? Attention!](https://lilianweng.github.io/posts/2018-06-24-attention/)\
+[12] [BertViz Interactive Tutorials](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing)\
+[13] Radford et al., 2021, [Learning transferable visual models from natural language super16 vision](https://arxiv.org/pdf/2103.00020)\
+[14] Bala Priya C., 2023, [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/)\
+[15] Moon et al., 2023, [AnyMAL: An Efficient and Scalable Any-Modality Augmented Language Model](https://arxiv.org/pdf/2309.16058)\
 
 
 
