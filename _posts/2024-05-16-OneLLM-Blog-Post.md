@@ -131,6 +131,7 @@ Now, generally, visual inputs are denoted as tokens $$ x \in R^{H x W} $$ with H
 Images are essentially a one-frame video input $$ x \in R^{1 x H x W} $$.
 When parallel-feeding these tokens into our tokenizer, the output is going to be 
 $$T x \frac{H}{14} x \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ because of the kernel’s input reduction!).
+test test
 
 Universal Encoder 
 ======
