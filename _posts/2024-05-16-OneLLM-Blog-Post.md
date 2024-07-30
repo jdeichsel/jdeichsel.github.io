@@ -22,7 +22,7 @@ As we will later showcase, this approach shows significant performance improveme
 	- Vision LLM
 	- MLLM
 2. OneLLM
-	- architecture
+	- Architecture
 3. Experiments
 	- Quantitative & Qualitative Analysis
 4. Ablation
