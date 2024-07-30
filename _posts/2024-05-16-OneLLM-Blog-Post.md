@@ -213,7 +213,7 @@ $$ w_m=\sigma \circ \mathds{R}_m\left(\left[q_m,x_m\right]\right) $$
 <img src="/images/softmax_example.png" width="596" height="300" />\
 *Figure 14: Example of applying softmax classification problem from [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/) [14]. Note that the output sums to 1*
 
-Now, to apply this weight to the respective experts and to obtain a final output, we’re going to be taking a weighted average over each weight and their experts. Our result $$\left[q_m,x_m\right]$$ is going to look as the following:
+Now, to apply this weight to the respective experts and to obtain a final output, we’re going to be taking a weighted average over each weight and their experts. Our result $$\left[q_m,x_m\right]$$ is going to look as the following:\
 $$\left[{\bar{q}}_m,{\bar{x}}_m\right]=UPM\left(\left[q_m,x_m\right]\right)\ =\ \sum_{k=1}^{K}{w_m\ast P_k\left(\left[q_m,x_m\right]\right)}$$\
 Great! We’ve applied our general Projection Experts to our input, leveraged the weights of each subsection of the input data and weighted each expert’s contribution to generate modified versions of the Modality Token and the original input.\
 Going forward, the input is no longer of interest. From here on out we will drop the input data in favor of the Modality Token, which we’ll be using to input into the Large Language Model. This is due to the uniform dimensions the modality tokens are set in, as well as the unpredictable dimensions of each modality’s input. Doing so allows us to more efficiently compute over the LLM’s expected input without needing to expect different structures or input forms.
@@ -232,7 +232,7 @@ You might assume that, similar to Large Language Models, a training dataset with
 However, that doesn't apply here. This is mostly due to the dataset imbalance, as the amount of moderated items for each modality differs wildly. To put this into perspective, this chart showcases some of the more quantifiable modalities in number of items per training dataset.
 
 ![](/images/modalities_size.png)\
-*Figure 15: Comparison of quantifiable modality datasets used to train OneLLM*
+*Figure 15: Comparison of quantifiable modality datasets used to train OneLLM [1]*
 
 As is apparent here, the image dataset is off the charts with over 1 billion items!
 While this looks concerning, we can assure you that it is. With such high differences in training datasets, extreme cases of bias can emerge during training where the model performs much more accurately to image inputs than to any other modalities. \
@@ -240,10 +240,11 @@ To combat this behavior, we’re going to be using a strategy called Modality Al
 The goal here is to train the Modality Tokenizers and the UPM, while keeping the Large Language Model frozen, i.e. not learning. 
 
 ![](/images/modality_alignment.png)\
-*Figure 16: Showcasing Modality Alignment training phase (red) by freezing certain parts of the architecture (blue)*
+*Figure 16: Showcasing Modality Alignment training phase (red) by freezing certain parts of the architecture (blue) [1]*
 
 Starting off at the image training dataset, we’re going to employ a pre-trained vision LLM which you’ve seen earlier, together with an Image Tokenizer and Image Projection Module and a single Image Expert. As it is now, we’re basically working with a vision LLM.\
-After training on the image dataset, new modalities are continually being added with each training dataset. For that, we denote for timestep t that $$ \mathcal{M}_1\cup\mathcal{M}_2\cup\ldots\cup\mathcal{M}_{t-1} $$. Essentially, all previous modalities have successfully been trained upon.\
+After training on the image dataset, new modalities are continually being added with each training dataset. For that, we denote for timestep $$t$$ so that $$ \mathcal{M}_1\cup\mathcal{M}_2\cup\ldots\cup\mathcal{M}_{t-1} $$\
+Essentially, all previous modalities have successfully been trained upon.\
 One important issue when training models is catastrophic forgetting where the model simply forgets previously trained knowledge when working with increasingly large datasets.
 To counteract on that, we will sample an equal amount of already trained items with the new dataset, showing the importance of sampling datasets by order of size.\
 Alright, that’s it! We’ve trained our Tokenizers and UPM. Now, we’re looking at what is basically a captioning model. What is missing now is reasoning, conversation, etc. \
