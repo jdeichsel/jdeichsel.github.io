@@ -317,7 +317,7 @@ This again goes to show just how strong the modalities are aligned with one anot
 One last part we’d like to touch on is the Ablation, showcasing different implementations and their impact on performance.
 
 ![](/images/image_text_benchmark.png)\
-*Figure 21: Impact of different implementation methods on performance [1]*
+*Figure 21: Impact of different implementation methods on performance [[1]](#references)*
 
 Most notably here is the Separate vs. Joint Training Mode. Quantifying the difference in performance between Separate Training – what regular MLLM’s do, training each modality separately – and OneLLM’s Joint Training turns into a massive performance loss in accuracy. \
 The same goes for the Weight Initialization as to which modality should be trained first to then align all others to it. As expected, starting off with the largest available dataset is much better than choosing at random.
@@ -337,6 +337,7 @@ With that being said, we are very curious to see where Han et al. will be taking
 
 
 # References
+<a name="references"></a>
 [1] Han et al., 2024, [OneLLM: One Framework to Align All Modalities with Language](https://doi.org/10.48550/arXiv.2312.03700)\
 [2] Puigcerver et al., 2024, [From Sparse to Soft Mixture of Experts](https://doi.org/10.48550/arXiv.1603.07285)\
 [3] Dumoulin & Visin., 2018, [A guide to convolution arithmetic for deep learning](https://doi.org/10.48550/arXiv.1603.07285)\
