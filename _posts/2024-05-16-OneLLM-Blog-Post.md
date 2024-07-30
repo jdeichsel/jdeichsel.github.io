@@ -127,10 +127,10 @@ Striding simply refers to how far the kernel is moving over the input data horiz
 As you can see, the kernel and stride size match!
 Why is that interesting? Because the kernel won’t overlap any grey values from separate calculations with each other. And thus, we can create the smallest possible matrix with the minimal number of calculations without missing any values.  This is specifically important for visual inputs as OneLLM is largely being trained on visual datasets and has great accuracy on this modality.
 
-Now, generally, visual inputs are denoted as tokens x\in R^{HxW} with H and W being the height and width of the image, respectively. However, since videos are also being processed, we will denote these as tokens x\in R^{TxHxW}, where T is the number of frames of a video. 
-Images are essentially a one-frame video input x\in R^{1xHxW}.
+Now, generally, visual inputs are denoted as tokens $$ x \in R^{H x W} $$ with H and W being the height and width of the image, respectively. However, since videos are also being processed, we will denote these as tokens $$ x \in R^{T x H x W} $$, where T is the number of frames of a video. 
+Images are essentially a one-frame video input $$ x \in R^{1 x H x W} $$.
 When parallel-feeding these tokens into our tokenizer, the output is going to be 
-Tx\frac{H}{14}x\frac{W}{14}   tokens ( \frac{1}{14} because of the kernel’s input reduction!).
+$$T x \frac{H}{14} x \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ because of the kernel’s input reduction!).
 
 Universal Encoder 
 ======
