@@ -1,33 +1,40 @@
 ---
-title: 'OneLLM: One Framework to Align All Modalities with Language'
+title: 'A comprehensive introduction to OneLLM: One Framework to Align All Modalities with Language'
 date: 2024-05-16
-permalink: /posts/onellm/
+permalink: /onellm/
 tags:
   - OneLLM
   - language model
-  - draft
 ---
 
-Deep Learning has revolutionized a number of fields in the last years by providing powerful capabilities for tasks that involve complex data structures and patterns, such as image recognition, language processing, and more. 
+# Motivation
 
-However, as Deep Learning proves to be effective in further areas over time, tasks become increasingly multimodal. This multimodality introduces new issues that come in the form of integrating and processing different data sources, such as text, images, audio or video. Using traditional models, which – for the most part – do not focus on any more than three modalities, fall short to the tasks at hand.
-Therefore, the motivation of OneLLM lies in creating a unified framework that allows to handle and align multiple modalities with language in order to address multimodal understanding. Doing so addresses the aforementioned inefficiencies that arise in existing models, heavily relying on modality-specific encoders which prove to be limited to a few common modalities. 
+Deep Learning has revolutionized various fields like image recognition and language processing by handling complex data structures and finding patterns within those.
+However, as tasks become increasingly multimodal, integrating different data sources like text, images, audio, and video poses new challenges. Traditional models, typically focusing on fewer than three modalities, fall short of this transformation.
+OneLLM aims to create a unified framework to handle and align multiple modalities with language, addressing inefficiencies in existing models that rely on limited modality-specific encoders. This blogpost explores OneLLM's development, introducing a framework that aligns eight modalities with language using a unified multimodal encoder and a progressive alignment pipeline.
+As we will later showcase, this approach shows significant performance improvements in captioning and reasoning, advancing the field of multimodality. Join us to explore OneLLM's potential!
 
-In this blogpost, we intend to explore the advancements presented during the development of OneLLM, introducing a unified framework that successfully aligns eight modalities to language. Overcoming the limitations of traditional models becomes possible through the use of a unified multimodal encoder and a progressive alignment pipeline, showing immense performance in captioning and reasoning. Join us as we explore the inner works and potential of OneLLM, advancing the field of multimodality.
 
-Recap of (M)LLMs
-======
-So, what makes Multimodal Large Language Models (MLLM) so popular and how do they compare to Large Language Models (LLM)? To answer this, we start at a relatable example: an LLM, specifically designed for vision tasks.
+# Table of Contents
+
+1. Large Language Model Background
+	- LLM
+	- Vision LLM
+	- MLLM
+2. OneLLM
+	- architecture
+3. Experiments
+	- Quantitative & Qualitative Analysis
+4. Ablation
+5. Pros & Cons 
+6. Conclusion
+
 
 LLM
 ------
-At its core, a Large Language Model is a deep learning model that is pre-trained on immensely large data sets. It features three main parts: an Image Encoder, a Projection Module and the pre-trained Vision LLM.
+Large Language Models (LLM) are artificial neural networks that use the transformer architecture. Which was introduced in 2017 by Vaswani et al. in the paper “Attention is all you need” [1]. Where they used it for translation purposes. 
+Nowadays LLM excel at general natural language processing tasks like question answering, reasoning or prompt generating. The reason behind is the extraordinary parallelizing and scaling capabilities of transformers which allow them to be trained on large amounts of data in a relatively short time.
 
-The Encoder is responsible for processing input such as images or video into single frames and breaking it down into features that highlight visual patterns, like textures or distinct objects. Processed information is being handed over to the Projection Module, which maps the extracted features into raw text data. This step is crucial in the process of analyzing visual data in that it forms the connection between the encoded visual input and the vision LMM’s ability to generate coherent answers based off of the projection modules text output. The extracted output of the projection module is stored in an embedding space shared by the projection module and the vision LLM. Doing so allows the model to align visual information with text descriptions to further improve upon its abilities.  
-
-Finally comes the vision LLM. Built on the transformer architecture, it is trained to analyze relationships between visual and text data, realized through self-attention mechanisms and feed-forward neural networks. Through the extracted information of the projection module, connecting visual features with textual data is enhancing its ability to reason and generate responses greatly. 
-
-In the domain of text understanding, the core piece of an LLMs input understand comes from the use of transformers. Their operations range from Self-Attention Mechanisms to grasp a better understand of a phrases structure by weighing word groups and contextualizing distant words in relative comparison, which proves to be difficult otherwise. To Gradient Descent to adjust parameters and weights during the training phase, effectively reducing computing costs by a large margin. Transformers prove especially useful to produce coherent and relevant outputs. A prevalent example of such a transformer is Generative Pre-Trained Transformer 3 (GPT-3) by OpenAI which operates as a decoder-only transformer, not leveraging capabilities as Self-Attention or Encoder-Layers.
 
 MLLM
 ------
