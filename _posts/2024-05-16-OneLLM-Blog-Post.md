@@ -137,7 +137,7 @@ To successfully convert all our different inputs into tokens – which are essen
 As an example for the Visual Tokenizer, the image is input using the RGB channels. Our input is basically split up into 3 channels of different signals:
 
 ![](/images/conv_layer_cin.png)\
-*Figure 8: Visual Tokenizer used in OneLLM*
+*Figure 8: Visual Tokenizer used in OneLLM [1]*
 <img src="/images/three_d_array.png" width="416" height="400" />
 *Figure 9: [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale) [10]*
 
@@ -164,7 +164,7 @@ Visual Tokenizer
 Looking at how the Convolutional Layer for our Visual Tokenizer is defined, we can observe the input- and output channels as well as the kernels’ size, and another parameter S, which stands for Stride.
 
 ![](/images/conv_layer_KS.png)\
-*Figure 8: Visual Tokenizer used in OneLLM*
+*Figure 8: Visual Tokenizer used in OneLLM [1]*
 
 Striding simply refers to how far the kernel is moving over the input data horizontally and vertically for each new calculation. The animation that you’ve seen earlier has a Kernel Size of K = (3,3) and a Stride of S = (1,1).\
 As you can see, the kernel and stride size match!
@@ -177,7 +177,7 @@ $$T \times \frac{H}{14} \times \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ becau
 Universal Encoder 
 ======
 The tokens are then fed into the Universal Encoder.\
-The Universal Encoder is a frozen pretrained Vision LLM, in this case CLIP-ViT [5] which combines ViTs image processing capabilities and CLIPS robust image to text understanding. As previously mentioned, this part of the model is already pretrained on extensive image-text data, so it already posseses robust vision and language alignment, which can then easily be transferred to other modalities. The Vision LLM extracts high dimensional features from the tokens $$x_m$$. These are added to learnable modality tokens $$q_m$$, which hold the information of the current modality type.\
+The Universal Encoder is a frozen pretrained Vision LLM, in this case CLIP-ViT [13] which combines ViTs image processing capabilities and CLIPS robust image to text understanding. As previously mentioned, this part of the model is already pretrained on extensive image-text data, so it already posseses robust vision and language alignment, which can then easily be transferred to other modalities. The Vision LLM extracts high dimensional features from the tokens $$x_m$$. These are added to learnable modality tokens $$q_m$$, which hold the information of the current modality type.\
 This concatenation is then fed into the UPM.
 
 Universal Projection Module 
@@ -186,7 +186,7 @@ Let’s get to one of the major players of OneLLM’s architecture, the Universa
 There are two components that make up the UPM: the Projection Experts and the Modality Router.
 
 ![](/images/UPM_architcture.png)\
-*Figure 12: Overview of OneLLM's Universal Projection Module (UPM)*
+*Figure 12: Overview of OneLLM's Universal Projection Module (UPM) [1]*
 
 Experts
 ======
@@ -200,15 +200,15 @@ Router
 ======
 Now that we have all these different experts with their opinions, we need a way to quantify the importance of each of their outputs. This is where the Modality Router comes into play! \
 We’re going to be applying the method of a soft router in OneLLM. We will cover other options of routers in the Ablation section.\
-The Soft Router essentially is a straightforward Multi-Layer Perceptron. Meaning that it is a type of neural network used to analyze subsections of the input data and to consider their overall importance in the context of the entire input data.
+The Soft Router from [From Sparse to Soft Mixture of Experts](https://doi.org/10.48550/arXiv.1603.07285) [2] essentially is a straightforward Multi-Layer Perceptron. Meaning that it is a type of neural network used to analyze subsections of the input data and to consider their overall importance in the context of the entire input data.
 
 ![](/images/soft_moe.png)\
-*Figure 13: Assigning weighted mixtures of the images’ sub-sections to experts*
+*Figure 13: Assigning weighted mixtures of the images’ sub-sections to experts [2]*
 
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. \
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.\
 Therefore, we denote the routing weight for each expert as\
-$$ w_m=\sigma\circle R_m\left(\left[q_m,x_m\right]\right) $$
+$$ w_m=\sigma \circ \ocirc \ R_m\left(\left[q_m,x_m\right]\right) $$
 
 ![](/images/softmax_example.png)\
 *Figure 14: Example of applying softmax classification problem. Note that the output sums to 1*
@@ -226,7 +226,7 @@ This is where Modality Alignment and Instruction Tuning come into play.
 
 
 Modality Alignment
-======
+------
 First, let’s have a look at Modality Alignment.\
 You might assume that, similar to Large Language Models, a training dataset with sufficient size and items of every modality will do the trick in successfully training and aligning our modalities.\
 However, that doesn't apply here. This is mostly due to the dataset imbalance, as the amount of moderated items for each modality differs wildly. To put this into perspective, this chart showcases some of the more quantifiable modalities in number of items per training dataset.
@@ -251,7 +251,7 @@ To gain these abilities, we’ll be training the LLM next in the Instruction Tun
 
 
 Instruction Tuning
-======
+------
 The process of Instruction Tuning is rather straightforward. We essentially flip around the Modality Alignment process and now train the Large Language Model while keeping the Tokenizers and UPM frozen, i.e. not learning.
 
 ![](/images/instruction_tuning.png)\
@@ -347,7 +347,7 @@ With that being said, we are very curious to see where Han et al. will be taking
 [10] Brandon Rohrer, 2019, [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale)
 [11] Lillian Weng, 2018, [Attention? Attention!](https://lilianweng.github.io/posts/2018-06-24-attention/)
 [12] [BertViz Interactive Tutorials](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing)
-
+[13] Radford et al., 2021, [Learning transferable visual models from natural language super16 vision](https://arxiv.org/pdf/2103.00020)
 
 
 
