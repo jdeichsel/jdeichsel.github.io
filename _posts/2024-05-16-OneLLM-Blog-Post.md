@@ -137,8 +137,8 @@ To successfully convert all our different inputs into tokens – which are essen
 As an example for the Visual Tokenizer, the image is input using the RGB channels. Our input is basically split up into 3 channels of different signals:
 
 ![](/images/conv_layer_cin.png)\
-*Figure 8: Visual Tokenizer used in OneLLM [1]*
-<img src="/images/three_d_array.png" width="416" height="400" />
+*Figure 8: Visual Tokenizer used in OneLLM [1]*\
+<img src="/images/three_d_array.png" width="416" height="400" />\
 *Figure 9: [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale) [10]*
 
 
@@ -185,7 +185,7 @@ Universal Projection Module
 Let’s get to one of the major players of OneLLM’s architecture, the Universal Projection Module, or UPM for short. \
 There are two components that make up the UPM: the Projection Experts and the Modality Router.
 
-![](/images/UPM_architcture.png)\
+<img src="/images/UPM_architcture.png" width="431" height="400" />\
 *Figure 12: Overview of OneLLM's Universal Projection Module (UPM) [1]*
 
 Experts
@@ -208,10 +208,10 @@ The Soft Router from [From Sparse to Soft Mixture of Experts](https://doi.org/10
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. \
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.\
 Therefore, we denote the routing weight for each expert as\
-$$ w_m=\sigma \circ \ocirc \ R_m\left(\left[q_m,x_m\right]\right) $$
+$$ w_m=\sigma \circ \mathds{R}_m\left(\left[q_m,x_m\right]\right) $$
 
-![](/images/softmax_example.png)\
-*Figure 14: Example of applying softmax classification problem. Note that the output sums to 1*
+<img src="/images/softmax_example.png" width="596" height="300" />\
+*Figure 14: Example of applying softmax classification problem from [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/) [14]. Note that the output sums to 1*
 
 Now, to apply this weight to the respective experts and to obtain a final output, we’re going to be taking a weighted average over each weight and their experts. Our result $$\left[q_m,x_m\right]$$ is going to look as the following:
 $$\left[{\bar{q}}_m,{\bar{x}}_m\right]=UPM\left(\left[q_m,x_m\right]\right)\ =\ \sum_{k=1}^{K}{w_m\ast P_k\left(\left[q_m,x_m\right]\right)}$$\
@@ -348,7 +348,7 @@ With that being said, we are very curious to see where Han et al. will be taking
 [11] Lillian Weng, 2018, [Attention? Attention!](https://lilianweng.github.io/posts/2018-06-24-attention/)
 [12] [BertViz Interactive Tutorials](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing)
 [13] Radford et al., 2021, [Learning transferable visual models from natural language super16 vision](https://arxiv.org/pdf/2103.00020)
-
+[14] Bala Priya C., 2023, [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/)
 
 
 
