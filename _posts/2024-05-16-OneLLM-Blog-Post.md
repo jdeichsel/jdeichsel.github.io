@@ -285,7 +285,7 @@ The model gives reasoning, e.g. what should you do if a bear approaches you (e).
 <img src="/images/qualitative_8.png" width="250" height="267" />\
 *Figure 19: Examples g) and h)*
 
-Quantitative Analysis
+Quantitative Analysis (test)
 ======
 Now we have a fully trained model ready to go! But how good is it exactly? 
 To answer this question, a few benchmarks have been provided to give a better understanding of how OneLLM is performing against similar MLLM’s. More interestingly are the specified LLM’s that are also provided within the benchmarks. We’ll get to why that is interesting in just a bit.
