@@ -132,6 +132,11 @@ To successfully convert all our different inputs into tokens – which are essen
 
 As an example for the Visual Tokenizer, the image is input using the RGB channels. Our input is basically split up into 3 channels of different signals:
 
+![](/images/conv_layer_cin.png)\\
+*Figure 8: Visual Tokenizer used in OneLLM*
+![](/images/three_d_array.png)\\
+*Figure 9: Example: Converting RGB images to separate signals*
+
 
 Convolution Layers
 ======
@@ -140,15 +145,22 @@ at least in the current version of the model. This can be either too high-resolu
 To circumvent this, Convolution Layers are being applied to the input signal to efficiently break it down while still retaining positional data.
 What this means is that we will be applying a separate matrix – the kernel – to our original input signal and calculate a weighted sum as a result. Most interesting here is that the result stays in the same relative position within the matrix.
 
+![](/images/conv_layer_gif.gif)\\
+*Figure 10: Applying Convolution Layers to an input signal*
+
 What this also allows us to do is to interpret patterns within the original image. This highly depends on the usage of our kernel’s weights but can highlight certain features of images while still downgrading the overall complexity of the input.
 Here is an example of applying a vertical edge detector kernel, the Horizontal Sobel Kernel, to an image. It’s called that way because it is looking for jumps in grey values on the horizontal plane, which basically highlights vertical objects!
 Notice how vertical features are being highlighted while horizontal features almost disappear. 
 
+![](/images/conv_layer_example.png)\\
+*Figure 11: Example: Horizontal Sobel Kernel detecting vertical features*
 
 Visual Tokenizer
 ======
 Looking at how the Convolutional Layer for our Visual Tokenizer is defined, we can observe the input- and output channels as well as the kernels’ size, and another parameter S, which stands for Stride.
 
+![](/images/conv_layer_KS.png)\\
+*Figure 8: Visual Tokenizer used in OneLLM*
 
 Striding simply refers to how far the kernel is moving over the input data horizontally and vertically for each new calculation. The animation that you’ve seen earlier has a Kernel Size of K = (3,3) and a Stride of S = (1,1).
 As you can see, the kernel and stride size match!
@@ -166,8 +178,10 @@ The tokens are then fed into the Universal Encoder. The Universal Encoder is a f
 Universal Projection Module 
 ======
 Let’s get to one of the major players of OneLLM’s architecture, the Universal Projection Module, or UPM for short. 
-There is two components that make up the UPM: the Projection Experts and the Modality Router.
+There are two components that make up the UPM: the Projection Experts and the Modality Router.
 
+![](/images/UPM_architcture.png)\\
+*Figure 12: Overview of OneLLM's Universal Projection Module (UPM)*
 
 Experts
 ======
@@ -183,11 +197,16 @@ Now that we have all these different experts with their opinions, we need a way 
 We’re going to be applying the method of a soft router in OneLLM. We will cover other options of routers in the Ablation section.
 The Soft Router essentially is a straightforward Multi-Layer Perceptron. Meaning that it is a type of neural network used to analyze subsections of the input data and to consider their overall importance in the context of the entire input data.
 
+![](/images/soft_moe.png)\\
+*Figure 13: Assigning weighted mixtures of the images’ sub-sections to experts*
+
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. 
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.
-Therefore, we denote the routing weight for each expert as 
-w_m=\sigma\circleR_m\left(\left[q_m,x_m\right]\right)
+Therefore, we denote the routing weight for each expert as\\
+$$ w_m=\sigma\circleR_m\left(\left[q_m,x_m\right]\right) $$
 
+![](/images/softmax_example.png)\\
+*Figure 14: Example of applying softmax classification problem. Note that the output sums to 1*
 
 Now, to apply this weight to the respective experts and to obtain a final output, we’re going to be taking a weighted average over each weight and their experts. Our result $$\left[q_m,x_m\right]$$ is going to look as the following:
 $$\left[{\bar{q}}_m,{\bar{x}}_m\right]=UPM\left(\left[q_m,x_m\right]\right)\ =\ \sum_{k=1}^{K}{w_m\ast P_k\left(\left[q_m,x_m\right]\right)}$$\\
@@ -206,13 +225,19 @@ Modality Alignment
 First, let’s have a look at Modality Alignment.
 You might assume that, similar to Large Language Models, a training dataset with sufficient size and items of every modality will do the trick in successfully training and aligning our modalities. However, that doesn't apply here. This is mostly due to the dataset imbalance, as the amount of moderated items for each modality differs wildly. To put this into perspective, this chart showcases some of the more quantifiable modalities in number of items per training dataset.
 
+![](/images/modalities_size.png)\\
+*Figure 15: Comparison of quantifiable modality datasets used to train OneLLM*
+
 As is apparent here, the image dataset is off the charts with over 1 billion items!
 While this looks concerning, we can assure you that it is. With such high differences in training datasets, extreme cases of bias can emerge during training where the model performs much more accurately to image inputs than to any other modalities. 
 To combat this behavior, we’re going to be using a strategy called Modality Alignment. As the name suggests, we will progressively align all modalities into OneLLM, no matter the number of modalities.
 The goal here is to train the Modality Tokenizers and the UPM, while keeping the Large Language Model frozen, i.e. not learning. 
 
+![](/images/modality_alignment.png)\\
+*Figure 16: Showcasing Modality Alignment training phase (red) by freezing certain parts of the architecture (blue)*
+
 Starting off at the image training dataset, we’re going to employ a pre-trained vision LLM which you’ve seen earlier, together with an Image Tokenizer and Image Projection Module and a single Image Expert. As it is now, we’re basically working with a vision LLM.
-After training on the image dataset, new modalities are continually being added with each training dataset. For that, we denote for timestep t that \mathcal{M}_1\cup\mathcal{M}_2\cup\ldots\cup\mathcal{M}_{t-1}. Essentially, all previous modalities have successfully been trained upon.
+After training on the image dataset, new modalities are continually being added with each training dataset. For that, we denote for timestep t that $$ \mathcal{M}_1\cup\mathcal{M}_2\cup\ldots\cup\mathcal{M}_{t-1} $$. Essentially, all previous modalities have successfully been trained upon.
 One important issue when training models is catastrophic forgetting where the model simply forgets previously trained knowledge when working with increasingly large datasets.
 To counteract on that, we will sample an equal amount of already trained items with the new dataset, showing the importance of sampling datasets by order of size.
 Alright, that’s it! We’ve trained our Tokenizers and UPM. Now, we’re looking at what is basically a captioning model. What is missing now is reasoning, conversation, etc. 
@@ -222,6 +247,9 @@ To gain these abilities, we’ll be training the LLM next in the Instruction Tun
 Instruction Tuning
 ======
 The process of Instruction Tuning is rather straightforward. We essentially flip around the Modality Alignment process and now train the Large Language Model while keeping the Tokenizers and UPM frozen, i.e. not learning.
+
+![](/images/instruction_tuning.png)\\
+*Figure 17: Showcasing Instruction Tuning training phase (red) by freezing certain parts of the architecture (blue)*
 
 To do so, there is a 2M items dataset specifically curated for OneLLM, containing items on all eight current modalities.
 And with the LLM training out of the way, we’re done! The model is now fully functional and can process all modalities, as well as answer user’s prompts in reasoning, question-answering or conversations.
@@ -233,12 +261,22 @@ Qualitative Analysis
 ======
 To start we will look at the qualitative Analysis. As we know OneLLM can understand up to eight different modalities, here we show you how well it performs.  We give it five different modality specific inputs and a question. As you can see the model recognizes all modalities effectively like the point-cloud humanoid (d). It can perform creative tasks, such as writing a poem based on beach sounds it heard (c). The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b).  As well as recognizing real-world events and tie them into answers, for instance it recognizes the movie poster of Oppenheimer, and it knows that Oppenheimer was the inventor of the atomic bomb.
 
+![](/images/qualitative_1.png)
+![](/images/qualitative_2.png)\\
+*Figure 18: Examples a) and b)*
+
+![](/images/qualitative_3.png)
+![](/images/qualitative_4.png)\\
+*Figure 19: Examples c) and d)*
 
 Quantitative Analysis
 ======
 Now we have a fully trained model ready to go! But how good is it exactly? 
 To answer this question, a few benchmarks have been provided to give a better understanding of how OneLLM is performing against similar MLLM’s. More interestingly are the specified LLM’s that are also provided within the benchmarks. We’ll get to why that is interesting in just a bit.
 To start things off, we’ll have a look at the Image-Text Benchmarks first. Contrary to the Visual Tokenizer, this does not encompass all visual tasks but only images.
+
+![](/images/image_text_benchmark.png)\\
+*Figure 20: Image-Text-Benchmark comparing MLLMs as well as LLMs. Scores in bold and underline represent the best and second best results, respectively within the MLLM category. Green scores represent the three best results per dataset*
 
 The results in bold and underline writing represent the best and second-best results in the MLLM category, respectively. 
 Each of these models was – disregarding a few missing entries – trained on all of these datasets, which test each model’s capability in Visual Question-Answering (VQA) and Image Captioning.
@@ -248,6 +286,9 @@ While OneLLM does still make it into the best three scores for half the datasets
 
 Two more benchmarks we’d like to quickly brush over are the Video-Text (left) and Video-Audio-Text (right) benchmarks. 
 
+![](/images/image_text_benchmark.png)\\
+*Figure 21: Example: Video-Text Benchmark (left) and Video-Audio-Text Benchmark (right) including comparison of zero-shot capabilities*
+
 While the previously established pattern largely repeats here with LLM’s being more accurate, OneLLM starts off on a disadvantage:
 It did not receive any training datasets concerning Video Question-Answering or Video-Audio Question-Answering. However, their related MLLM AnyMal-13B and ChatBridge-13B did! 
 This again goes to show just how strong the modalities are aligned with one another within OneLLM and can learn from each other, given the reduced number of parameters in comparison.
@@ -255,6 +296,10 @@ This again goes to show just how strong the modalities are aligned with one anot
 
 # Ablation
 One last part we’d like to touch on is the Ablation, showcasing different implementations and their impact on performance.
+
+![](/images/image_text_benchmark.png)\\
+*Figure 22: Impact of different implementation methods on performance*
+
 Most notably here is the Separate vs. Joint Training Mode. Quantifying the difference in performance between Separate Training – what regular MLLM’s do, training each modality separately – and OneLLM’s Joint Training turns into a massive performance loss in accuracy. 
 The same goes for the Weight Initialization as to which modality should be trained first to then align all others to it. As expected, starting off with the largest available dataset is much better than choosing at random.
 
