@@ -208,7 +208,7 @@ The Soft Router essentially is a straightforward Multi-Layer Perceptron. Meaning
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. \\
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.\
 Therefore, we denote the routing weight for each expert as\
-$$ w_m=\sigma\circleR_m\left(\left[q_m,x_m\right]\right) $$
+$$ w_m=\sigma\circle R_m\left(\left[q_m,x_m\right]\right) $$
 
 ![](/images/softmax_example.png)\
 *Figure 14: Example of applying softmax classification problem. Note that the output sums to 1*
@@ -269,12 +269,12 @@ To start we will look at the qualitative Analysis. As we know OneLLM can underst
 It can perform creative tasks, such as writing a poem based on beach sounds it heard (c).\
 The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b).  As well as recognizing real-world events and tie them into answers, for instance it recognizes the movie poster of Oppenheimer, and it knows that Oppenheimer was the inventor of the atomic bomb.
 
-![](/images/qualitative_1.png)
-![](/images/qualitative_2.png)\
+<img src="/images/qualitative_1.png" width="100" height="200" />
+<img src="/images/qualitative_2.png" width="100" height="200" />\
 *Figure 18: Examples a) and b)*
 
-![](/images/qualitative_3.png)
-![](/images/qualitative_4.png)\
+<img src="/images/qualitative_3.png" width="100" height="200" />
+<img src="/images/qualitative_4.png" width="100" height="200" />\
 *Figure 19: Examples c) and d)*
 
 Quantitative Analysis
