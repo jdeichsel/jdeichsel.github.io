@@ -265,9 +265,9 @@ And with the LLM training out of the way, we’re done! The model is now fully f
 
 Qualitative Analysis
 ======
-To start we will look at the qualitative Analysis. As we know OneLLM can understand up to eight different modalities, here we show you how well it performs.  We give it five different modality specific inputs and a question. As you can see the model recognizes all modalities effectively like the point-cloud humanoid (d).\
+To start we will look at the qualitative Analysis. As we know OneLLM can understand up to eight different modalities, here we show you how well it performs. We give it different modality specific inputs and a question. As you can see the model recognizes all modalities effectively like the point-cloud humanoid (d) or the fMRI signal obtained of a school bus and sunny weather (f).\
 It can perform creative tasks, such as writing a poem based on beach sounds it heard (c).\
-The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b).  As well as recognizing real-world events and tie them into answers, for instance it recognizes the movie poster of Oppenheimer, and it knows that Oppenheimer was the inventor of the atomic bomb.
+The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b). As well as recognizing real-world events and tie them into answers, for instance, it recognizes the movie poster of Oppenheimer and it knows that Oppenheimer was the inventor of the atomic bomb.
 
 <img src="/images/qualitative_1.png" width="250" height="267" />
 <img src="/images/qualitative_2.png" width="250" height="267" />\
