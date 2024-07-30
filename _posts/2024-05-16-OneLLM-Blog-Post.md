@@ -333,7 +333,18 @@ Thank you for your attention! We hope that you’ve gained some valuable insight
 With that being said, we are very curious to see where Han et al. will be taking this project to, as future work announced changes to the granularity of analyzing data as well as providing more fine-tuned datasets. 
 
 
-
+# References
+[1] Han et al., 2024, [OneLLM: One Framework to Align All Modalities with Language](https://doi.org/10.48550/arXiv.2312.03700)
+[2] Puigcerver et al., 2024, [From Sparse to Soft Mixture of Experts](https://doi.org/10.48550/arXiv.1603.07285)
+[3] Dumoulin & Visin., 2018, [A guide to convolution arithmetic for deep learning](https://doi.org/10.48550/arXiv.1603.07285)
+[4] Irhum Shafkat, 2018, [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
+[5] Zhao et al., 2020, [ChatBridge: Bridging Modalities with Large Language Model as a Language Catalyst](https://doi.org/10.48550/arXiv.2305.16103)
+[6] Vaswani et al., 2017, [Attention is all you need](https://doi.org/10.48550/arXiv.1706.03762)
+[7] Jesse Vig, 2019, [Deconstructing BERT, Part 2: Visualizing the Inner Works of Attention](https://towardsdatascience.com/deconstructing-bert-part-2-visualizing-the-inner-workings-of-attention-60a16d86b5c1)
+[8] Dosovitskiy et al., 2021, [An Image is worth 16x16 words: Transformers for Image Recognition at Scale](https://doi.org/10.48550/arXiv.2010.11929)
+[9] Li et al., 2023, [BLIP-2: Bootstrapping Language-Image Pre-Training with Frozen Image Encoders and Large Language Models](https://doi.org/10.48550/arXiv.2301.12597)
+[10] Brandon Rohrer, 2019, [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale)
+[11] Lillian Weng, 2018, [Attention? Attention!](https://lilianweng.github.io/posts/2018-06-24-attention/)
 
 
 
