@@ -8,7 +8,7 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-title                    : "A comprehensive introduction to OneLLM: One Framework to Align All Modalities with Language"
+title                    : "Blog webpage of Timofey Egorov and Jan Deichsel"
 title_separator          : "-"
 name                     : &name "Jan Deichsel, Timofey Egorov"
 description              : &description "personal description"
