@@ -269,13 +269,21 @@ To start we will look at the qualitative Analysis. As we know OneLLM can underst
 It can perform creative tasks, such as writing a poem based on beach sounds it heard (c).\
 The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b).  As well as recognizing real-world events and tie them into answers, for instance it recognizes the movie poster of Oppenheimer, and it knows that Oppenheimer was the inventor of the atomic bomb.
 
-<img src="/images/qualitative_1.png" width="300" height="320" />
-<img src="/images/qualitative_2.png" width="300" height="320" />\
+<img src="/images/qualitative_1.png" width="250" height="267" />
+<img src="/images/qualitative_2.png" width="250" height="267" />\
 *Figure 18: Examples a) and b)*
 
-<img src="/images/qualitative_3.png" width="300" height="320" />
-<img src="/images/qualitative_4.png" width="300" height="320" />\
+<img src="/images/qualitative_3.png" width="250" height="267" />
+<img src="/images/qualitative_4.png" width="250" height="267" />\
 *Figure 19: Examples c) and d)*
+
+<img src="/images/qualitative_5.png" width="250" height="267" />
+<img src="/images/qualitative_6.png" width="250" height="267" />\
+*Figure 19: Examples e) and f)*
+
+<img src="/images/qualitative_7.png" width="250" height="267" />
+<img src="/images/qualitative_8.png" width="250" height="267" />\
+*Figure 19: Examples g) and h)*
 
 Quantitative Analysis
 ======
