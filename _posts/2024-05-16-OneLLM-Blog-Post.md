@@ -44,6 +44,12 @@ Abstract
 To explain how the transformer works we will consider translation from English to French sentences. We start on a highly abstract level and later go a little bit more in detail.
 The Transformer consist of an encoder module, a decoder module
 and the Attention Mechanism.
+
+
+![transformer](images/transformer_architecture.png)
+*Figure 1: Transformer architecture by Vaswani et al.*
+
+
 The encoder receives an input sequence, i.e. an English sentence as
 vectors. It processes the data and gives an abstract continuous
 representation that holds all learned information as an output vector.
@@ -58,7 +64,7 @@ different parts of the input sequence to weigh the importance
 of the information.
 To solve natural language processing tasks a model has to first understand the input sentence.  For example, “The server brings you your drinks.” and “I just crashed the server.” both use the word “server”, but one means waiter and the other computer, we humans understand the context, so we can distinguish them. The transformer achieves this, thanks to self-attention. The attention is turned to the input text itself. This helps in understanding the context of a word within a sentence.
 In the transformer architecture they use multi-head self-attention. Essentially, they perform self-attention multiple times in parallel, so different heads can prioritize different parts of the input data and capture complex relationships within.
-Here in Figure:[2] you can see a visualization of multi-head self-attention on the sentence “the cat sat on the mat” where one head weighs that for the word “sat” that “cat” is most important. Answering “what or who” sat, and the other head prioritize the word “on” and “mat” answering “where” it sat. you can also follow this link [https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing] to test it out for yourself!
+Here in Figure [2] you can see a visualization of multi-head self-attention on the sentence “the cat sat on the mat” where one head weighs that for the word “sat” that “cat” is most important. Answering “what or who” sat, and the other head prioritize the word “on” and “mat” answering “where” it sat. You can also follow this [link](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing) to test it out for yourself!
 
 Detailed
 ------
@@ -131,7 +137,6 @@ Now, generally, visual inputs are denoted as tokens $$ x \in R^{H x W} $$ with H
 Images are essentially a one-frame video input $$ x \in R^{1 x H x W} $$.
 When parallel-feeding these tokens into our tokenizer, the output is going to be 
 $$T x \frac{H}{14} x \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ because of the kernel’s input reduction!).
-test test
 
 Universal Encoder 
 ======
@@ -144,7 +149,128 @@ There is two components that make up the UPM: the Projection Experts and the Mod
 
 
 Experts
-------
+======
+As the name suggests, this model is not deploying modality-specific experts as we’ve seen before, but rather projection experts that apply to any modality.
+Essentially, the experts themselves are a stack of transformer layers – as we’ve discussed earlier – and are pre-trained on image-text data. When inputting our combined token, these experts apply their own weights in parallel!
+This looks like the following: consider an input $$ UPM \left ( \left [ q_m, x_m \right ] \right ) $$, which is a concatenated list of tokens from the learnable Modality Token q and the tokenized original input x, to which we apply each expert K. Applying the experts yields K outputs $$ P_K \left ( \left [q_m, x_m \right ] \right ) $$. Note that m is the current modality of the input.
+Imagine in a real-world setting an expert voicing his opinion on something that concerns his field of expertise.
+
+
+Router
+======
+Now that we have all these different experts with their opinions, we need a way to quantify the importance of each of their outputs. This is where the Modality Router comes into play! 
+We’re going to be applying the method of a soft router in OneLLM. We will cover other options of routers in the Ablation section.
+The Soft Router essentially is a straightforward Multi-Layer Perceptron. Meaning that it is a type of neural network used to analyze subsections of the input data and to consider their overall importance in the context of the entire input data.
+
+In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. 
+To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.
+Therefore, we denote the routing weight for each expert as 
+w_m=\sigma\circleR_m\left(\left[q_m,x_m\right]\right)
+
+
+Now, to apply this weight to the respective experts and to obtain a final output, we’re going to be taking a weighted average over each weight and their experts. Our result $$\left[q_m,x_m\right]$$ is going to look as the following:
+$$\left[{\bar{q}}_m,{\bar{x}}_m\right]=UPM\left(\left[q_m,x_m\right]\right)\ =\ \sum_{k=1}^{K}{w_m\ast P_k\left(\left[q_m,x_m\right]\right)}$$
+Great! We’ve applied our general Projection Experts to our input, leveraged the weights of each subsection of the input data and weighted each expert’s contribution to generate modified versions of the Modality Token and the original input.
+Going forward, the input is no longer of interest. From here on out we will drop the input data in favor of the Modality Token, which we’ll be using to input into the Large Language Model. This is due to the uniform dimensions the modality tokens are set in, as well as the unpredictable dimensions of each modality’s input. Doing so allows us to more efficiently compute over the LLM’s expected input without needing to expect different structures or input forms.
+
+
+# Modality Alignment / Instruction Tuning
+So, that’s it right? We’ve successfully turned an input of any modality into tokens, computed them over our experts and used the UPM to embed the modality token into the LLM to generate a response, given a user’s prompt.
+Not quite! The model hasn’t yet been trained at all. Before we get to process our modalities, we first need to teach OneLLM to correctly identify and analyze inputs and reasoning, conversation, and so on.
+This is where Modality Alignment and Instruction Tuning come into play. 
+
+
+Modality Alignment
+======
+First, let’s have a look at Modality Alignment.
+You might assume that, similar to Large Language Models, a training dataset with sufficient size and items of every modality will do the trick in successfully training and aligning our modalities. However, that doesn't apply here. This is mostly due to the dataset imbalance, as the amount of moderated items for each modality differs wildly. To put this into perspective, this chart showcases some of the more quantifiable modalities in number of items per training dataset.
+
+As is apparent here, the image dataset is off the charts with over 1 billion items!
+While this looks concerning, we can assure you that it is. With such high differences in training datasets, extreme cases of bias can emerge during training where the model performs much more accurately to image inputs than to any other modalities. 
+To combat this behavior, we’re going to be using a strategy called Modality Alignment. As the name suggests, we will progressively align all modalities into OneLLM, no matter the number of modalities.
+The goal here is to train the Modality Tokenizers and the UPM, while keeping the Large Language Model frozen, i.e. not learning. 
+
+Starting off at the image training dataset, we’re going to employ a pre-trained vision LLM which you’ve seen earlier, together with an Image Tokenizer and Image Projection Module and a single Image Expert. As it is now, we’re basically working with a vision LLM.
+After training on the image dataset, new modalities are continually being added with each training dataset. For that, we denote for timestep t that \mathcal{M}_1\cup\mathcal{M}_2\cup\ldots\cup\mathcal{M}_{t-1}. Essentially, all previous modalities have successfully been trained upon.
+One important issue when training models is catastrophic forgetting where the model simply forgets previously trained knowledge when working with increasingly large datasets.
+To counteract on that, we will sample an equal amount of already trained items with the new dataset, showing the importance of sampling datasets by order of size.
+Alright, that’s it! We’ve trained our Tokenizers and UPM. Now, we’re looking at what is basically a captioning model. What is missing now is reasoning, conversation, etc. 
+To gain these abilities, we’ll be training the LLM next in the Instruction Tuning Stage.
+
+
+Instruction Tuning
+======
+The process of Instruction Tuning is rather straightforward. We essentially flip around the Modality Alignment process and now train the Large Language Model while keeping the Tokenizers and UPM frozen, i.e. not learning.
+
+To do so, there is a 2M items dataset specifically curated for OneLLM, containing items on all eight current modalities.
+And with the LLM training out of the way, we’re done! The model is now fully functional and can process all modalities, as well as answer user’s prompts in reasoning, question-answering or conversations.
+
+
+# Experiments
+
+Qualitative Analysis
+======
+To start we will look at the qualitative Analysis. As we know OneLLM can understand up to eight different modalities, here we show you how well it performs.  We give it five different modality specific inputs and a question. As you can see the model recognizes all modalities effectively like the point-cloud humanoid (d). It can perform creative tasks, such as writing a poem based on beach sounds it heard (c). The model gives reasoning, e.g. what should you do if a bear approaches you (e). OneLLM is also capable of identifying activities in a depth/normal map (b).  As well as recognizing real-world events and tie them into answers, for instance it recognizes the movie poster of Oppenheimer, and it knows that Oppenheimer was the inventor of the atomic bomb.
+
+
+Quantitative Analysis
+======
+Now we have a fully trained model ready to go! But how good is it exactly? 
+To answer this question, a few benchmarks have been provided to give a better understanding of how OneLLM is performing against similar MLLM’s. More interestingly are the specified LLM’s that are also provided within the benchmarks. We’ll get to why that is interesting in just a bit.
+To start things off, we’ll have a look at the Image-Text Benchmarks first. Contrary to the Visual Tokenizer, this does not encompass all visual tasks but only images.
+
+The results in bold and underline writing represent the best and second-best results in the MLLM category, respectively. 
+Each of these models was – disregarding a few missing entries – trained on all of these datasets, which test each model’s capability in Visual Question-Answering (VQA) and Image Captioning.
+Looking closely at the results, we can observe OneLLM being the strongest in its field, outperforming all related models on these datasets. Especially compared to AnyMAL-70B which is working on approximately 10x as many parameters as OneLLM-7B, showing the extreme parameter and performance efficiency of OneLLM.
+However, if we look at the scores marked in green, the benchmarks show a little different perspective. Here, we marked the overall three best models from both categories. 
+While OneLLM does still make it into the best three scores for half the datasets, it is nowhere near as dominant as when looking into the MLLM category only. This also goes for the other MLLM models, who are almost unable to secure a competitive score rating. 
+
+Two more benchmarks we’d like to quickly brush over are the Video-Text (left) and Video-Audio-Text (right) benchmarks. 
+
+While the previously established pattern largely repeats here with LLM’s being more accurate, OneLLM starts off on a disadvantage:
+It did not receive any training datasets concerning Video Question-Answering or Video-Audio Question-Answering. However, their related MLLM AnyMal-13B and ChatBridge-13B did! 
+This again goes to show just how strong the modalities are aligned with one another within OneLLM and can learn from each other, given the reduced number of parameters in comparison.
+
+
+# Ablation
+One last part we’d like to touch on is the Ablation, showcasing different implementations and their impact on performance.
+Most notably here is the Separate vs. Joint Training Mode. Quantifying the difference in performance between Separate Training – what regular MLLM’s do, training each modality separately – and OneLLM’s Joint Training turns into a massive performance loss in accuracy. 
+The same goes for the Weight Initialization as to which modality should be trained first to then align all others to it. As expected, starting off with the largest available dataset is much better than choosing at random.
+
+
+# Pros & Cons
+This model is indeed a strong alternative and proof-of-concept in comparison to previous MLLM works, showcasing an impressive ability to work with relatively small modality datasets and to be able to align them quite effectively.
+The implementation of universal modules – such as the Universal Projection Module and Encoder – proved to be quite successful and paves the way for future works building upon the architecture.
+However, OneLLM is not without its drawbacks. While it does manage to unify eight different modalities into a single framework, there aren’t that many use-cases to justify doing such a task, specifically when upping the number of modalities within the framework.
+Additionally, one must decide whether taking up a model with multiple modalities is worth taking over multiple LLM with specialized use-cases and higher accuracy. 
+While both methods have their own benefits, you’ll essentially end up leveraging OneLLM’s flexibility with an LLM’s accuracy – and not that much accuracy at that! 
+
+
+# Conclusion
+Thank you for your attention! We hope that you’ve gained some valuable insights into the inner working on OneLLM and what discerns it from other models!
+With that being said, we are very curious to see where Han et al. will be taking this project to, as future work announced changes to the granularity of analyzing data as well as providing more fine-tuned datasets. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
