@@ -46,7 +46,7 @@ The Transformer consist of an encoder module, a decoder module
 and the Attention Mechanism.
 
 
-![transformer](images/transformer_architecture.png)
+![](/images/transformer_architecture.png)
 *Figure 1: Transformer architecture by Vaswani et al.*
 
 
