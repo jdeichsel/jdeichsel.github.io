@@ -58,14 +58,14 @@ The output is then fed into the decoder. During the training stage the
 decoder additionally receives the final correct output as input,
 e.g. French Translation of Input sentence. It learns to predict the
 output step by step. During the application the output remains a
-step-by-step prediction, which is now again fed into the decoder.\
+step-by-step prediction, which is now again fed into the decoder.
 
 The driving force behind the transformer is the attention mechanism
 within both encoder and decoder. It allows the model to focus on
 different parts of the input sequence to weigh the importance
-of the information.\
+of the information.
 
-To solve natural language processing tasks a model has to first understand the input sentence.  For example, “The server brings you your drinks.” and “I just crashed the server.” both use the word “server”, but one means waiter and the other computer, we humans understand the context, so we can distinguish them. The transformer achieves this, thanks to self-attention. The attention is turned to the input text itself. This helps in understanding the context of a word within a sentence.\
+To solve natural language processing tasks a model has to first understand the input sentence.  For example, “The server brings you your drinks.” and “I just crashed the server.” both use the word “server”, but one means waiter and the other computer, we humans understand the context, so we can distinguish them. The transformer achieves this, thanks to self-attention. The attention is turned to the input text itself. This helps in understanding the context of a word within a sentence.
 
 In the transformer architecture they use multi-head self-attention. Essentially, they perform self-attention multiple times in parallel, so different heads can prioritize different parts of the input data and capture complex relationships within.
 Here in Figure 2 you can see a visualization of multi-head self-attention on the sentence “the cat sat on the mat” where one head weighs that for the word “sat” that “cat” is most important. Answering “what or who” sat, and the other head prioritize the word “on” and “mat” answering “where” it sat. You can also follow this [link](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing) to test it out for yourself!
@@ -80,7 +80,7 @@ Now in more detail:
 The input sequence, e.g. text, is converted to numerical representations called tokens. Each token is converted into a vector through input embedding. The positional information of each word is also encoded in the vectors themselves, so that the word-order-information is stored in the data and not in the network-structure itself.\
 This allows the model to learn the importance of word order from data, which makes it easier to train.  At each layer, each token is then contextualized with other tokens via a parallel multi-head attention mechanism. This allows the signal to amplify key tokens and lower less important tokens. This is done by the self-attention function.
 
-$$ Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}}) $$\
+$$ Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}}) $$
 
 The Input being the query vector Q, the key vector K and the value vector V. The query vector represents the word being attended to, while the key vectors represent all the words in the sentence. The value vectors store the information associated with each word. The key/value/query concept is analogous to retrieval systems. For example, when you search for videos on Youtube, the search engine will map your query (text in the search bar) against a set of keys (video title, description, etc.) associated with candidate videos in their database, then present you the best matched videos (values).\
 The attention weights are computed by taking the dot product between the query and key vectors, followed by a SoftMax operation to obtain a distribution over the words. And then multiplied with the value vector.\
@@ -208,7 +208,7 @@ The Soft Router from [From Sparse to Soft Mixture of Experts](https://doi.org/10
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. \
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.\
 Therefore, we denote the routing weight for each expert as\
-$$ w_m=\sigma \circ \mathds{R}_m\left(\left[q_m,x_m\right]\right) $$
+$$ w_m=\sigma \circ \R_m\left(\left[q_m,x_m\right]\right) $$
 
 <img src="/images/softmax_example.png" width="596" height="300" />\
 *Figure 14: Example of applying softmax classification problem from [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/) [14]. Note that the output sums to 1*
@@ -351,7 +351,7 @@ With that being said, we are very curious to see where Han et al. will be taking
 [12] [BertViz Interactive Tutorials](https://colab.research.google.com/drive/1hXIQ77A4TYS4y3UthWF-Ci7V7vVUoxmQ?usp=sharing)\
 [13] Radford et al., 2021, [Learning transferable visual models from natural language super16 vision](https://arxiv.org/pdf/2103.00020)\
 [14] Bala Priya C., 2023, [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/)\
-[15] Moon et al., 2023, [AnyMAL: An Efficient and Scalable Any-Modality Augmented Language Model](https://arxiv.org/pdf/2309.16058)\
+[15] Moon et al., 2023, [AnyMAL: An Efficient and Scalable Any-Modality Augmented Language Model](https://arxiv.org/pdf/2309.16058)
 
 
 
