@@ -13,7 +13,8 @@ Deep Learning has revolutionized various fields like image recognition and langu
 However, as tasks become increasingly multimodal, integrating different data sources like text, images, audio, and video poses new challenges. Traditional models, typically focusing on fewer than three modalities, fall short of this transformation.\
 [OneLLM](https://doi.org/10.48550/arXiv.2312.03700) by Han et al. [[1]](#references) aims to create a unified framework to handle and align multiple modalities with language, addressing inefficiencies in existing models that rely on limited modality-specific encoders.\
 This blogpost explores OneLLM's development, introducing a framework that aligns eight modalities with language using a unified multimodal encoder and a progressive alignment pipeline.\
-As we will later showcase, this approach shows significant performance improvements in captioning and reasoning, advancing the field of multimodality. Join us to explore OneLLM's potential!
+As we will later showcase, this approach shows significant performance improvements in captioning and reasoning, advancing the field of multimodality.\
+Join us to explore OneLLM's potential!
 
 
 # Table of Contents
