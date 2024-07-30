@@ -208,7 +208,7 @@ The Soft Router from [From Sparse to Soft Mixture of Experts](https://doi.org/10
 In the example here, you can see that instead of allocating one piece of the image to each expert to analyze, it is assigning a weighted average over each column to the experts. The images’ weights are previously applied by the router by order of importance. \
 To now compare each weight with one another, a SoftMax activation function is applied. The SoftMax in particular is very helpful – even for the human eye! – to solve classification problems. As the sum of probabilities that are output for all items is always 1.\
 Therefore, we denote the routing weight for each expert as\
-$$ w_m=\sigma \circ \R_m\left(\left[q_m,x_m\right]\right) $$
+$$ w_m=\sigma \circ \mathbb{R}_m\left(\left[q_m,x_m\right]\right) $$
 
 <img src="/images/softmax_example.png" width="596" height="300" />\
 *Figure 14: Example of applying softmax classification problem from [Softmax Activation Function: Everything You Need to Know](https://www.pinecone.io/learn/softmax-activation/) [14]. Note that the output sums to 1*
