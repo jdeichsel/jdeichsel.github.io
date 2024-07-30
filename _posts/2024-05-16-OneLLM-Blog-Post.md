@@ -87,7 +87,7 @@ The attention weights are computed by taking the dot product between the query a
 This is being processed multiple times. The outputs are then concatenated and linearly transformed to obtain the final representation. By using multiple attention heads, the model can capture both local and global dependencies, allowing for a more comprehensive understanding of the input sequence.
 
 ![](/images/transformer_example.png)\
-*Figure 3: Transformer architecture in further detail, showcasing the implementation of attention mechanisms*
+*Figure 3: Transformer architecture in further detail, showcasing the implementation of attention mechanisms [11]*
 
 So, the most important information to remember: Transformers have incredible parallelizing capabilities so that they can be trained on massive amounts of data in a relatively short time. \
 This makes them not only interesting for NLP tasks but also in other domains, like computer vision.
@@ -95,10 +95,10 @@ This makes them not only interesting for NLP tasks but also in other domains, li
 
 ViT
 ======
-Moving on to a more visual part of LLMs, Dosovitskiy et al. [2] presented the Vision Transformer ViT, where they applied the transformer architecture for image processing. The input is a 2D image which is first divided into same size patches, which are then converted into 1D vectors and processed through the encoder part of the transformer. The vectors carrying the key information are then passed to a classification head - a simple feed forward layer - which outputs a classification of the images.
+Moving on to a more visual part of LLMs, Dosovitskiy et al. in [An Image is worth 16x16 words: Transformers for Image Recognition at Scale](https://doi.org/10.48550/arXiv.2010.11929) [8] presented the Vision Transformer ViT, where they applied the transformer architecture for image processing. The input is a 2D image which is first divided into same size patches, which are then converted into 1D vectors and processed through the encoder part of the transformer. The vectors carrying the key information are then passed to a classification head - a simple feed forward layer - which outputs a classification of the images.
 
 ![](/images/ViT_example.png)\
-*Figure 4: Vision-transformer (ViT) architecture, with transformer encoder in greater detail by Dosovitskiy et al.*
+*Figure 4: Vision-transformer (ViT) architecture, with transformer encoder in greater detail by Dosovitskiy et al. [8]*
 
 # Vision-LLM
 The progress in LLMs has also inspired researchers to employ LLMs as an interface for multimodal tasks, such as vision-language learning, audio and speech recognition or video understanding. The goal is to align different modalities like vision and audio with language so that a model can receive an image and a prompt as input and produce an answer. \
@@ -106,23 +106,23 @@ A vision LLM for example, typically consists of a visual encoder, like ViT, an L
 For other modalities the architecture is pretty much the same, just with a modality specific encoder.
 
 ![](/images/vision_LLM_architecture.png)\
-*Figure 5: Example: vision LLM by Li et al. (BLIP-2)*
+*Figure 5: Example: vision LLM by Li et al. [BLIP-2: Bootstrapping Language-Image Pre-Training with Frozen Image Encoders and Large Language Models](https://doi.org/10.48550/arXiv.2301.12597) [9]*
 
 
 # MLLM
-There are also several attempts to integrate multiple modalities into one Multimodal - LLM (MLLM). Most previous works such as ChatBridge [3,4] use a Vision-LLM as a basis and extent to new modalities by aligning each with the LLM using modality-specific encoders and projection modules. However, these modality-specific encoders usually differ in architecture and considerable effort is required to unify them into a single framework. Furthermore, pretrained encoders that deliver reliable performance are usually restricted to widely used modalities such as image, audio, and video. This limitation poses a constraint on MLLMs’ ability to expand to more modalities. \
+There are also several attempts to integrate multiple modalities into one Multimodal - LLM (MLLM). Most previous works such as [ChatBridge](https://doi.org/10.48550/arXiv.2305.16103) [5] use a Vision-LLM as a basis and extent to new modalities by aligning each with the LLM using modality-specific encoders and projection modules. However, these modality-specific encoders usually differ in architecture and considerable effort is required to unify them into a single framework. Furthermore, pretrained encoders that deliver reliable performance are usually restricted to widely used modalities such as image, audio, and video. This limitation poses a constraint on MLLMs’ ability to expand to more modalities. \
 Thus, a crucial challenge for MLLMs is how to build a unified and scalable encoder capable of handling a wide range of modalities.
 
 
 ![](/images/MLLM_architecture.png)\
-*Figure 6: ChatBridge Architecture by Zhao et al.*
+*Figure 6: ChatBridge Architecture by Zhao et al. [5]*
 
 
 # OneLLM
 Okay, let’s take a brief look at the overall architecture of what OneLLM is working with.
 
 ![](/images/onellm_total_architecture.png)\
-*Figure 7: Overview of OneLLM’s architecture by Han et al.*
+*Figure 7: Overview of OneLLM’s architecture by Han et al. [1]*
 
 The attentive reader will realize quickly that this structure differs in multiple pieces from the MLMMs that we’ve visited earlier, and it is! Most notably, the Encoder and Projection Module are now unified to work on any given modality, rather than having one for each modality. We’ll get later as to why this crucial to OneLLM’s effectiveness.\
 To take a deeper dive into each of these mechanisms, let’s first have a look at their basic functionalities.\
@@ -138,8 +138,8 @@ As an example for the Visual Tokenizer, the image is input using the RGB channel
 
 ![](/images/conv_layer_cin.png)\
 *Figure 8: Visual Tokenizer used in OneLLM*
-![](/images/three_d_array.png)\
-*Figure 9: Example: Converting RGB images to separate signals*
+<img src="/images/three_d_array.png" width="416" height="400" />
+*Figure 9: [How to convert an RGB image to Grayscale](https://e2eml.school/convert_rgb_to_grayscale) [10]*
 
 
 Convolution Layers
@@ -150,14 +150,14 @@ To circumvent this, Convolution Layers are being applied to the input signal to 
 What this means is that we will be applying a separate matrix – the kernel – to our original input signal and calculate a weighted sum as a result. Most interesting here is that the result stays in the same relative position within the matrix.
 
 ![](/images/conv_layer_gif.gif)\
-*Figure 10: Applying Convolution Layers to an input signal*
+*Figure 10: Applying Convolution Layers to an input signal from [A guide to convolution arithmetic for deep learning](https://doi.org/10.48550/arXiv.1603.07285) [3]*
 
 What this also allows us to do is to interpret patterns within the original image. This highly depends on the usage of our kernel’s weights but can highlight certain features of images while still downgrading the overall complexity of the input.
 Here is an example of applying a vertical edge detector kernel, the Horizontal Sobel Kernel, to an image. It’s called that way because it is looking for jumps in grey values on the horizontal plane, which basically highlights vertical objects!
 Notice how vertical features are being highlighted while horizontal features almost disappear. 
 
 ![](/images/conv_layer_example.png)\
-*Figure 11: Example: Horizontal Sobel Kernel detecting vertical features*
+*Figure 11: Example: Horizontal Sobel Kernel detecting vertical features from [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1) [4]*
 
 Visual Tokenizer
 ======
@@ -169,10 +169,10 @@ Looking at how the Convolutional Layer for our Visual Tokenizer is defined, we c
 Striding simply refers to how far the kernel is moving over the input data horizontally and vertically for each new calculation. The animation that you’ve seen earlier has a Kernel Size of K = (3,3) and a Stride of S = (1,1).\
 As you can see, the kernel and stride size match!
 Why is that interesting? Because the kernel won’t overlap any grey values from separate calculations with each other. And thus, we can create the smallest possible matrix with the minimal number of calculations without missing any values.  This is specifically important for visual inputs as OneLLM is largely being trained on visual datasets and has great accuracy on this modality.\
-Now, generally, visual inputs are denoted as tokens $$ x \in R^{H x W} $$ with H and W being the height and width of the image, respectively. However, since videos are also being processed, we will denote these as tokens $$ x \in R^{T x H x W} $$, where T is the number of frames of a video. 
-Images are essentially a one-frame video input $$ x \in R^{1 x H x W} $$.\
+Now, generally, visual inputs are denoted as tokens $$ x \in R^{H \times W} $$ with H and W being the height and width of the image, respectively. However, since videos are also being processed, we will denote these as tokens $$ x \in R^{T \times H \times W} $$, where T is the number of frames of a video. 
+Images are essentially a one-frame video input $$ x \in R^{1 \times H \times W} $$.\
 When parallel-feeding these tokens into our tokenizer, the output is going to be 
-$$T x \frac{H}{14} x \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ because of the kernel’s input reduction!).
+$$T \times \frac{H}{14} \times \frac{W}{14} $$ tokens ( $$ \frac{1}{14} $$ because of the kernel’s input reduction!).
 
 Universal Encoder 
 ======
