@@ -306,7 +306,7 @@ While OneLLM does still make it into the best three scores for half the datasets
 
 Two more benchmarks we’d like to quickly brush over are the Video-Text (left) and Video-Audio-Text (right) benchmarks. 
 
-![](/images/image_text_benchmark.png)\
+![](/images/video_audio_text_benchmark.png)\
 *Figure 20: Example: Video-Text Benchmark (left) and Video-Audio-Text Benchmark (right) including comparison of zero-shot capabilities [[1]](#references)*
 
 While the previously established pattern largely repeats here with LLM’s being more accurate, OneLLM starts off on a disadvantage:\
