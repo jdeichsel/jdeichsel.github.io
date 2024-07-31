@@ -317,7 +317,7 @@ This again goes to show just how strong the modalities are aligned with one anot
 # Ablation
 One last part we’d like to touch on is the Ablation, showcasing different implementations and their impact on performance.
 
-![](/images/ablation.png)\
+<img src="/images/ablation.png" width="724" height="600" />\
 *Figure 21: Impact of different implementation methods on performance [[1]](#references)*
 
 Most notably here is the Separate vs. Joint Training Mode. Quantifying the difference in performance between Separate Training – what regular MLLM’s do, training each modality separately – and OneLLM’s Joint Training turns into a massive performance loss in accuracy. \
